@@ -1,0 +1,1395 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portal Pembelajaran Mendalam</title>
+<style>
+:root{
+  --primary:#1a3a5c;--primary-light:#2563a8;--accent:#e8a020;--accent-light:#fbbf24;
+  --success:#16a34a;--danger:#dc2626;--warn:#d97706;--bg:#f0f4f8;
+  --text:#1e293b;--text-muted:#64748b;--border:#cbd5e1;--sidebar-w:272px;
+  --radius:10px;--shadow:0 2px 12px rgba(0,0,0,.1);
+  --c-MA:#1a3a5c;--c-MA2:#2563a8;
+  --c-CP:#14532d;--c-CP2:#16a34a;
+  --c-ATP:#78350f;--c-ATP2:#d97706;
+  --c-PROSEM:#831843;--c-PROSEM2:#db2777;
+  --c-PROTA:#4c1d95;--c-PROTA2:#7c3aed;
+  --c-KKTP:#7c2d12;--c-KKTP2:#ea580c;
+  --c-PP:#1e3a5c;--c-PP2:#0891b2;
+  --c-LKPD:#3b1f6e;--c-LKPD2:#9333ea;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+
+/* SPLASH */
+#splash{position:fixed;inset:0;background:linear-gradient(135deg,#0f2744,#1a3a5c,#0e4480);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;gap:18px}
+.sp-ring{width:100px;height:100px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent-light));display:flex;align-items:center;justify-content:center;font-size:48px;box-shadow:0 0 40px rgba(232,160,32,.4);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.07)}}
+#splash h1{color:#fff;font-size:25px;font-weight:700;text-align:center}
+#splash p{color:rgba(255,255,255,.65);font-size:12px;text-align:center}
+.sp-bar{width:200px;height:4px;background:rgba(255,255,255,.2);border-radius:2px;overflow:hidden}
+.sp-fill{height:100%;background:var(--accent);border-radius:2px;animation:spf 2.1s ease forwards}
+@keyframes spf{from{width:0}to{width:100%}}
+
+/* SETTING PAGE */
+#settingPage{min-height:100vh;display:none;align-items:center;justify-content:center;background:linear-gradient(135deg,#0f2744,#1a3a5c 60%,#0e4480);padding:20px}
+.setting-box{background:#fff;border-radius:16px;width:100%;max-width:480px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.setting-hd{background:linear-gradient(135deg,var(--primary),var(--primary-light));padding:28px;text-align:center;color:#fff}
+.setting-hd .ico{font-size:44px;margin-bottom:8px}
+.setting-hd h2{font-size:18px;font-weight:700;margin-bottom:4px}
+.setting-hd p{font-size:11px;opacity:.75}
+.setting-body{padding:24px}
+.step-label{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700;color:var(--primary);margin-bottom:16px}
+.step-num{width:22px;height:22px;border-radius:50%;background:var(--primary);color:#fff;font-size:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.how-to{background:#f0f4f8;border-radius:8px;padding:13px 15px;margin-bottom:16px;font-size:12px;line-height:1.8;color:var(--text)}
+.how-to ol{padding-left:18px}
+.how-to code{background:#e2e8f0;padding:1px 5px;border-radius:4px;font-size:11px;font-family:monospace}
+.url-row{display:flex;gap:8px}
+.url-row input{flex:1}
+
+/* AUTH */
+#authPage{min-height:100vh;display:none;align-items:center;justify-content:center;background:linear-gradient(135deg,#0f2744,#1a3a5c 60%,#0e4480);padding:20px}
+.auth-box{background:#fff;border-radius:16px;width:100%;max-width:460px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.auth-hd{background:linear-gradient(135deg,var(--primary),var(--primary-light));padding:28px;text-align:center;color:#fff}
+.auth-hd .ico{font-size:44px;margin-bottom:8px}
+.auth-hd h2{font-size:20px;font-weight:700;margin-bottom:2px}
+.auth-hd p{font-size:11px;opacity:.8}
+.auth-url-info{background:#f0f4f8;border-bottom:1px solid var(--border);padding:9px 16px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.auth-url-info span{font-size:11px;color:var(--text-muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}
+.auth-tabs{display:flex;border-bottom:2px solid var(--border)}
+.atab{flex:1;padding:12px;text-align:center;cursor:pointer;font-weight:600;font-size:13px;color:var(--text-muted);transition:all .2s;border:none;background:none}
+.atab.active{color:var(--primary);border-bottom:2px solid var(--primary);margin-bottom:-2px}
+.auth-body{padding:24px}
+.tp{display:none}.tp.active{display:block}
+
+/* FORM */
+.fr2{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.fg{margin-bottom:12px}
+label{display:block;font-size:12px;font-weight:600;color:var(--text);margin-bottom:4px}
+input,select,textarea{width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;color:var(--text);background:#fff;transition:border-color .2s;outline:none}
+input:focus,select:focus,textarea:focus{border-color:var(--primary-light)}
+textarea{resize:vertical;min-height:70px}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:8px 15px;border:none;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;transition:all .2s}
+.btn-primary{background:var(--primary);color:#fff}.btn-primary:hover{background:var(--primary-light)}
+.btn-accent{background:var(--accent);color:#fff}.btn-accent:hover{background:var(--accent-light);color:#1a3a5c}
+.btn-success{background:var(--success);color:#fff}
+.btn-danger{background:var(--danger);color:#fff}
+.btn-warn{background:var(--warn);color:#fff}
+.btn-outline{background:transparent;border:1.5px solid var(--border);color:var(--text)}.btn-outline:hover{border-color:var(--primary);color:var(--primary)}
+.btn-sm{padding:5px 10px;font-size:11px}
+.btn-block{width:100%;justify-content:center;padding:10px}
+.btn-link{background:none;border:none;cursor:pointer;font-size:11px;color:var(--primary-light);text-decoration:underline;padding:0}
+
+/* APP LAYOUT */
+#appPage{display:none;min-height:100vh}
+.sidebar{position:fixed;left:0;top:0;bottom:0;width:var(--sidebar-w);background:linear-gradient(180deg,#0d2240,#1a3a5c);display:flex;flex-direction:column;z-index:100;overflow:hidden}
+.sb-logo{padding:18px 20px;border-bottom:1px solid rgba(255,255,255,.1);display:flex;align-items:center;gap:10px}
+.sb-logo .li{font-size:26px}
+.sb-logo .lt{color:#fff}.sb-logo .lt h3{font-size:13px;font-weight:700}.sb-logo .lt span{font-size:10px;opacity:.5}
+.sb-user{padding:13px 20px;border-bottom:1px solid rgba(255,255,255,.1);display:flex;align-items:center;gap:10px}
+.sb-av{width:34px;height:34px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:var(--primary);flex-shrink:0}
+.sb-inf{flex:1;min-width:0}.sb-nm{color:#fff;font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sb-rl{color:rgba(255,255,255,.42);font-size:10px}
+.sb-nav{flex:1;padding:8px 0;overflow-y:auto}
+.nsec{padding:7px 20px 3px;font-size:9px;font-weight:700;color:rgba(255,255,255,.28);text-transform:uppercase;letter-spacing:1px}
+.ni{display:flex;align-items:center;gap:8px;padding:9px 20px;color:rgba(255,255,255,.65);cursor:pointer;transition:all .2s;font-size:13px;border-left:3px solid transparent;user-select:none}
+.ni:hover{background:rgba(255,255,255,.07);color:#fff}
+.ni.active{background:rgba(255,255,255,.11);color:#fff;border-left-color:var(--accent)}
+.ni .ico{font-size:16px;flex-shrink:0}
+.ni-sub{display:flex;align-items:center;gap:8px;padding:8px 20px 8px 38px;color:rgba(255,255,255,.55);cursor:pointer;transition:all .2s;font-size:12px;border-left:3px solid transparent}
+.ni-sub:hover{background:rgba(255,255,255,.06);color:#fff}
+.ni-sub.active{color:#fff;border-left-color:var(--accent);font-weight:600}
+.ni-sub .dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.dot-MA{background:#60a5fa}.dot-CP{background:#4ade80}.dot-ATP{background:#fbbf24}
+.dot-PROSEM{background:#f472b6}.dot-PROTA{background:#a78bfa}.dot-KKTP{background:#fb923c}.dot-PP{background:#22d3ee}.dot-LKPD{background:#c084fc}
+.sb-foot{padding:12px 20px;border-top:1px solid rgba(255,255,255,.1);display:flex;flex-direction:column;gap:6px}
+.main{margin-left:var(--sidebar-w);padding:20px;min-height:100vh}
+.topbar{background:#fff;border-radius:var(--radius);padding:13px 20px;display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;box-shadow:var(--shadow)}
+.topbar h2{font-size:18px;font-weight:700;color:var(--primary)}
+
+/* STATS */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(165px,1fr));gap:13px;margin-bottom:20px}
+.sc{background:#fff;border-radius:var(--radius);padding:16px;box-shadow:var(--shadow);display:flex;align-items:center;gap:13px}
+.sc .si{font-size:32px}.sc .sv{font-size:24px;font-weight:700;color:var(--primary)}.sc .sl{font-size:11px;color:var(--text-muted);margin-top:1px}
+
+/* SECTION */
+.section{display:none}.section.active{display:block}
+.card{background:#fff;border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);margin-bottom:16px}
+.card-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px}
+.card-title{font-size:15px;font-weight:700;color:var(--primary);display:flex;align-items:center;gap:7px}
+.jenis-banner{padding:14px 18px;border-radius:var(--radius) var(--radius) 0 0;color:#fff;display:flex;align-items:center;justify-content:space-between;margin:-18px -18px 16px -18px}
+.jenis-banner h3{font-size:15px;font-weight:700;display:flex;align-items:center;gap:8px}
+.jenis-banner p{font-size:11px;opacity:.8;margin-top:2px}
+.bg-MA{background:linear-gradient(135deg,var(--c-MA),var(--c-MA2))}
+.bg-CP{background:linear-gradient(135deg,var(--c-CP),var(--c-CP2))}
+.bg-ATP{background:linear-gradient(135deg,var(--c-ATP),var(--c-ATP2))}
+.bg-PROSEM{background:linear-gradient(135deg,var(--c-PROSEM),var(--c-PROSEM2))}
+.bg-PROTA{background:linear-gradient(135deg,var(--c-PROTA),var(--c-PROTA2))}
+.bg-KKTP{background:linear-gradient(135deg,var(--c-KKTP),var(--c-KKTP2))}
+.bg-PP{background:linear-gradient(135deg,var(--c-PP),var(--c-PP2))}
+.bg-LKPD{background:linear-gradient(135deg,var(--c-LKPD),var(--c-LKPD2))}
+
+/* TABLE */
+.tw{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{background:var(--primary);color:#fff;padding:9px 12px;text-align:left;white-space:nowrap}
+td{padding:9px 12px;border-bottom:1px solid var(--border);vertical-align:middle}
+tr:hover td{background:#f8fafc}
+.badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600}
+.badge-success{background:#dcfce7;color:var(--success)}
+.badge-warn{background:#fef3c7;color:var(--warn)}
+.badge-danger{background:#fee2e2;color:var(--danger)}
+.badge-info{background:#dbeafe;color:#1d4ed8}
+.badge-primary{background:#e0e7ff;color:#4338ca}
+.badge-MA{background:#dbeafe;color:#1d4ed8}
+.badge-CP{background:#dcfce7;color:#15803d}
+.badge-ATP{background:#fef3c7;color:#92400e}
+.badge-PROSEM{background:#fce7f3;color:#9d174d}
+.badge-PROTA{background:#ede9fe;color:#6d28d9}
+.badge-KKTP{background:#fff7ed;color:#9a3412}
+.badge-PP{background:#e0f2fe;color:#0e7490}
+.badge-LKPD{background:#f3e8ff;color:#7e22ce}
+
+.fb{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.fb select,.fb input{max-width:170px}
+
+.mg{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:13px}
+.mc{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;transition:transform .18s,box-shadow .18s}
+.mc:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.12)}
+.mc-hd{padding:12px 14px;color:#fff}
+.mc-hd .jbr{display:inline-block;padding:2px 8px;background:rgba(255,255,255,.25);border-radius:4px;font-size:10px;font-weight:700;margin-bottom:5px}
+.mc-hd h4{font-size:13px;font-weight:600;line-height:1.4}
+.mc-bd{padding:12px 14px}
+.mc-bd .mp{font-size:11px;font-weight:600;margin-bottom:2px}
+.mc-bd .tk{font-size:11px;color:var(--text-muted);margin-bottom:6px}
+.mc-bd .ds{font-size:11px;color:var(--text-muted);line-height:1.5;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;margin-bottom:8px}
+.mc-ft{padding:9px 14px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.dlc{font-size:11px;color:var(--text-muted)}
+
+.gtabs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
+.gtab{padding:6px 13px;border-radius:20px;border:1.5px solid var(--border);background:#fff;cursor:pointer;font-size:12px;font-weight:600;color:var(--text-muted);transition:all .2s;display:flex;align-items:center;gap:4px}
+.gtab:hover{border-color:var(--primary);color:var(--primary)}
+.gtab.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+.gtab.ac-CP.active{background:var(--c-CP2);border-color:var(--c-CP2)}
+.gtab.ac-ATP.active{background:var(--c-ATP2);border-color:var(--c-ATP2);color:#1a1a1a}
+.gtab.ac-PROSEM.active{background:var(--c-PROSEM2);border-color:var(--c-PROSEM2)}
+.gtab.ac-PROTA.active{background:var(--c-PROTA2);border-color:var(--c-PROTA2)}
+.gtab.ac-KKTP.active{background:var(--c-KKTP2);border-color:var(--c-KKTP2)}
+.gtab.ac-PP.active{background:var(--c-PP2);border-color:var(--c-PP2)}
+.gtab.ac-LKPD.active{background:var(--c-LKPD2);border-color:var(--c-LKPD2)}
+
+/* MODAL */
+.mo{position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;z-index:1000;padding:16px}
+.md{background:#fff;border-radius:12px;width:100%;max-width:560px;max-height:90vh;overflow-y:auto}
+.md-hd{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.md-hd h3{font-size:14px;font-weight:700;color:var(--primary)}
+.md-bd{padding:20px}
+.md-ft{padding:13px 20px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:flex-end}
+.btn-x{background:none;border:none;font-size:18px;cursor:pointer;color:var(--text-muted)}
+
+/* TOAST */
+#tc{position:fixed;top:16px;right:16px;z-index:9000;display:flex;flex-direction:column;gap:7px}
+.toast{padding:10px 15px;border-radius:8px;color:#fff;font-size:12px;font-weight:500;box-shadow:0 4px 12px rgba(0,0,0,.2);animation:si .3s ease;display:flex;align-items:center;gap:7px;max-width:300px}
+@keyframes si{from{transform:translateX(110%);opacity:0}to{transform:translateX(0);opacity:1}}
+.ts{background:var(--success)}.te{background:var(--danger)}.tw2{background:var(--warn)}.ti{background:var(--primary-light)}
+
+.empty{text-align:center;padding:44px 20px;color:var(--text-muted)}
+.empty .ei{font-size:40px;margin-bottom:8px}
+.loading{text-align:center;padding:32px;color:var(--text-muted)}
+.loading::after{content:'';display:inline-block;width:20px;height:20px;border:3px solid var(--border);border-top-color:var(--primary);border-radius:50%;animation:spin .8s linear infinite;vertical-align:middle;margin-left:8px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.divider{border:none;border-top:1px solid var(--border);margin:13px 0}
+.alert{padding:9px 13px;border-radius:8px;margin-bottom:11px;font-size:12px}
+.aw{background:#fef3c7;color:#92400e;border:1px solid #fde68a}
+.ai{background:#dbeafe;color:#1e40af;border:1px solid #bfdbfe}
+.as{background:#dcfce7;color:#166534;border:1px solid #bbf7d0}
+.gar{display:flex;gap:5px;flex-wrap:wrap}
+@media(max-width:768px){.sidebar{transform:translateX(-100%)}.sidebar.open{transform:translateX(0)}.main{margin-left:0;padding:14px}.fr2{grid-template-columns:1fr}.mg{grid-template-columns:1fr}}
+
+/* ============================================================
+   LANDING PAGE + FLYING BALLS
+   ============================================================ */
+#landingPage{
+  display:none;min-height:100vh;
+  background:linear-gradient(135deg,#060f1e 0%,#0d2240 40%,#0e3a6e 70%,#091829 100%);
+  overflow-x:hidden;position:relative;
+}
+#landingPage::before{
+  content:'';position:fixed;inset:0;
+  background-image:
+    radial-gradient(1px 1px at 8%  18%,rgba(255,255,255,.7) 0%,transparent 100%),
+    radial-gradient(1px 1px at 28% 58%,rgba(255,255,255,.5) 0%,transparent 100%),
+    radial-gradient(1.5px 1.5px at 52% 12%,rgba(255,255,255,.8) 0%,transparent 100%),
+    radial-gradient(1px 1px at 72% 78%,rgba(255,255,255,.5) 0%,transparent 100%),
+    radial-gradient(1px 1px at 91% 33%,rgba(255,255,255,.6) 0%,transparent 100%),
+    radial-gradient(1px 1px at 18% 88%,rgba(255,255,255,.4) 0%,transparent 100%),
+    radial-gradient(1.5px 1.5px at 63% 47%,rgba(255,255,255,.6) 0%,transparent 100%),
+    radial-gradient(1px 1px at 82% 8%, rgba(255,255,255,.5) 0%,transparent 100%),
+    radial-gradient(1px 1px at 44% 72%,rgba(255,255,255,.6) 0%,transparent 100%),
+    radial-gradient(1px 1px at 14% 42%,rgba(255,255,255,.4) 0%,transparent 100%),
+    radial-gradient(1px 1px at 38% 95%,rgba(255,255,255,.3) 0%,transparent 100%),
+    radial-gradient(1px 1px at 77% 55%,rgba(255,255,255,.4) 0%,transparent 100%);
+  animation:twinkle 4s ease-in-out infinite alternate;pointer-events:none;z-index:0;
+}
+@keyframes twinkle{0%{opacity:.5}100%{opacity:1}}
+
+/* Orbs */
+.lp-orb{position:absolute;border-radius:50%;filter:blur(80px);pointer-events:none;animation:orbFloat 8s ease-in-out infinite alternate}
+.lp-orb1{width:420px;height:420px;background:rgba(37,99,168,.35);top:-120px;right:-100px;animation-delay:0s}
+.lp-orb2{width:320px;height:320px;background:rgba(232,160,32,.18);bottom:-60px;left:-80px;animation-delay:-3s}
+.lp-orb3{width:260px;height:260px;background:rgba(14,68,128,.4);top:45%;left:18%;animation-delay:-5s}
+@keyframes orbFloat{0%{transform:translate(0,0) scale(1)}100%{transform:translate(28px,-38px) scale(1.1)}}
+
+/* ── FLYING BALLS CANVAS ── */
+#ballCanvas{position:fixed;inset:0;pointer-events:none;z-index:1}
+
+/* RUNNING TEXT / MARQUEE */
+.lp-marquee-wrap{
+  position:relative;z-index:10;
+  background:linear-gradient(90deg,rgba(232,160,32,.18),rgba(232,160,32,.10),rgba(232,160,32,.18));
+  border-top:1px solid rgba(232,160,32,.3);
+  border-bottom:1px solid rgba(232,160,32,.3);
+  padding:10px 0;overflow:hidden;
+  backdrop-filter:blur(6px);
+}
+.lp-marquee-track{
+  display:flex;align-items:center;gap:0;
+  white-space:nowrap;
+  animation:marqueeRun 18s linear infinite;
+}
+.lp-marquee-track:hover{animation-play-state:paused}
+@keyframes marqueeRun{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+.lp-marquee-item{
+  display:inline-flex;align-items:center;gap:10px;
+  color:var(--accent-light);font-size:13px;font-weight:700;
+  padding:0 40px;letter-spacing:.3px;
+}
+.lp-marquee-item .toa-icon{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:28px;height:28px;flex-shrink:0;
+}
+.lp-marquee-sep{color:rgba(232,160,32,.4);font-size:16px;margin:0 6px}
+
+
+/* NAV */
+.lp-nav{position:relative;z-index:10;display:flex;align-items:center;justify-content:space-between;padding:20px 48px}
+.lp-nav-logo{display:flex;align-items:center;gap:10px}
+.lp-nav-logo .logo-ico{width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--accent-light));display:flex;align-items:center;justify-content:center;font-size:22px;box-shadow:0 4px 18px rgba(232,160,32,.45)}
+.lp-nav-logo h1{color:#fff;font-size:15px;font-weight:800;line-height:1.2}
+.lp-nav-logo span{color:rgba(255,255,255,.45);font-size:10px;display:block}
+.lp-nav-btn{background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.22);padding:9px 22px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;backdrop-filter:blur(10px);transition:all .25s;display:flex;align-items:center;gap:6px}
+.lp-nav-btn:hover{background:rgba(255,255,255,.2);border-color:rgba(255,255,255,.4);transform:translateY(-2px)}
+
+/* HERO */
+.lp-hero{position:relative;z-index:10;text-align:center;padding:60px 24px 44px;max-width:860px;margin:0 auto}
+.lp-hero-badge{display:inline-flex;align-items:center;gap:7px;background:rgba(232,160,32,.14);border:1px solid rgba(232,160,32,.35);color:var(--accent-light);padding:7px 16px;border-radius:30px;font-size:12px;font-weight:700;margin-bottom:26px;backdrop-filter:blur(10px);animation:fadeDown .6s ease both}
+.pulse-dot{width:7px;height:7px;border-radius:50%;background:var(--accent);animation:pulseDot 1.5s ease-in-out infinite}
+@keyframes pulseDot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.7)}}
+.lp-hero h2{font-size:clamp(30px,6vw,60px);font-weight:900;color:#fff;line-height:1.1;margin-bottom:16px;animation:fadeDown .7s .1s ease both}
+.lp-hero h2 .hl{background:linear-gradient(90deg,var(--accent),#f59e0b,#fbbf24);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.lp-hero p{font-size:clamp(13px,2vw,17px);color:rgba(255,255,255,.62);max-width:580px;margin:0 auto 34px;line-height:1.75;animation:fadeDown .7s .2s ease both}
+.lp-hero-cta{display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap;animation:fadeDown .7s .3s ease both}
+.lp-btn-main{background:linear-gradient(135deg,var(--accent),var(--accent-light));color:#1a1a1a;border:none;padding:14px 34px;border-radius:12px;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 8px 30px rgba(232,160,32,.4);transition:all .25s;display:inline-flex;align-items:center;gap:8px}
+.lp-btn-main:hover{transform:translateY(-3px);box-shadow:0 14px 40px rgba(232,160,32,.55)}
+.lp-btn-sec{background:rgba(255,255,255,.08);color:#fff;border:1.5px solid rgba(255,255,255,.25);padding:14px 28px;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;backdrop-filter:blur(10px);transition:all .25s;display:inline-flex;align-items:center;gap:8px}
+.lp-btn-sec:hover{background:rgba(255,255,255,.15);transform:translateY(-3px)}
+@keyframes fadeDown{from{opacity:0;transform:translateY(-18px)}to{opacity:1;transform:translateY(0)}}
+
+/* DOC CARDS */
+.lp-preview{position:relative;z-index:10;display:flex;justify-content:center;gap:11px;flex-wrap:wrap;padding:0 24px 52px;animation:fadeUp .8s .4s ease both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:translateY(0)}}
+.lp-doc-card{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:14px 18px;min-width:112px;text-align:center;backdrop-filter:blur(12px);transition:all .25s;animation:cardBob 4s ease-in-out infinite alternate}
+.lp-doc-card:nth-child(2){animation-delay:-.6s}.lp-doc-card:nth-child(3){animation-delay:-1.2s}
+.lp-doc-card:nth-child(4){animation-delay:-1.8s}.lp-doc-card:nth-child(5){animation-delay:-2.4s}
+.lp-doc-card:nth-child(6){animation-delay:-3s}.lp-doc-card:nth-child(7){animation-delay:-3.6s}
+.lp-doc-card:nth-child(8){animation-delay:-4.2s}
+@keyframes cardBob{0%{transform:translateY(0)}100%{transform:translateY(-8px)}}
+.lp-doc-card:hover{background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.3);transform:translateY(-12px) scale(1.06)!important}
+.lp-doc-ico{font-size:26px;margin-bottom:7px}
+.lp-doc-name{color:#fff;font-size:11px;font-weight:700;white-space:nowrap}
+.lp-doc-sub{color:rgba(255,255,255,.38);font-size:10px;margin-top:2px}
+
+/* STATS */
+.lp-stats{position:relative;z-index:10;display:flex;justify-content:center;flex-wrap:wrap;max-width:680px;margin:0 auto;padding:0 24px 52px;animation:fadeUp 1s .5s ease both}
+.lp-stat{flex:1;min-width:130px;text-align:center;padding:22px 14px;border-right:1px solid rgba(255,255,255,.08)}
+.lp-stat:last-child{border-right:none}
+.lp-stat-num{font-size:34px;font-weight:900;color:var(--accent-light);line-height:1}
+.lp-stat-label{color:rgba(255,255,255,.45);font-size:10px;margin-top:5px;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+
+/* DIVIDER */
+.lp-div{position:relative;z-index:10;display:flex;align-items:center;gap:16px;max-width:880px;margin:0 auto;padding:0 24px 44px}
+.lp-div::before,.lp-div::after{content:'';flex:1;height:1px;background:rgba(255,255,255,.1)}
+.lp-div span{color:rgba(255,255,255,.3);font-size:11px;white-space:nowrap}
+
+/* FEATURES */
+.lp-features{position:relative;z-index:10;display:grid;grid-template-columns:repeat(auto-fit,minmax(235px,1fr));gap:16px;max-width:880px;margin:0 auto;padding:0 24px 52px;animation:fadeUp 1s .55s ease both}
+.lp-feat{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:22px;backdrop-filter:blur(10px);transition:all .25s}
+.lp-feat:hover{background:rgba(255,255,255,.09);border-color:rgba(255,255,255,.2);transform:translateY(-4px)}
+.lp-feat-ico{width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:12px}
+.lp-feat h4{color:#fff;font-size:14px;font-weight:700;margin-bottom:6px}
+.lp-feat p{color:rgba(255,255,255,.48);font-size:12px;line-height:1.65}
+
+/* CTA BOX */
+.lp-cta-box{position:relative;z-index:10;text-align:center;padding:0 24px 56px}
+.lp-cta-inner{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-radius:20px;padding:40px 32px;max-width:600px;margin:0 auto;backdrop-filter:blur(12px)}
+
+/* FOOTER */
+.lp-footer{position:relative;z-index:10;text-align:center;padding:20px 24px 34px;border-top:1px solid rgba(255,255,255,.07)}
+.lp-footer p{color:rgba(255,255,255,.25);font-size:11px;line-height:1.9}
+.lp-footer strong{color:rgba(255,255,255,.5)}
+
+</style>
+</head>
+<body>
+
+<!-- SPLASH -->
+<div id="splash">
+  <div class="sp-ring">📚</div>
+  <h1>Portal Pembelajaran Mendalam</h1>
+  <p>CP · ATP · PROSEM · PROTA · KKTP · Modul Ajar · Power Point · LKPD</p>
+  <p style="opacity:.5;font-size:11px">Permendikdasmen No. 13 Tahun 2025</p>
+  <div class="sp-bar"><div class="sp-fill"></div></div>
+</div>
+
+
+<!-- ============================================================
+     LANDING PAGE
+     ============================================================ -->
+<div id="landingPage">
+  <canvas id="ballCanvas"></canvas>
+  <div class="lp-orb lp-orb1"></div>
+  <div class="lp-orb lp-orb2"></div>
+  <div class="lp-orb lp-orb3"></div>
+
+  <!-- NAV -->
+  <nav class="lp-nav">
+    <div class="lp-nav-logo">
+      <div class="logo-ico">📚</div>
+      <div><h1>Portal PM</h1><span>Pembelajaran Mendalam</span></div>
+    </div>
+    <button class="lp-nav-btn" onclick="showAuth()">🔑 Masuk &nbsp;→</button>
+  </nav>
+
+
+  <!-- RUNNING TEXT -->
+  <div class="lp-marquee-wrap">
+    <div class="lp-marquee-track">
+      <span class="lp-marquee-item"><svg class="toa-icon" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- megaphone body -->
+  <path d="M5 10.5h3.5l9-6v19l-9-6H5a1.5 1.5 0 01-1.5-1.5v-4A1.5 1.5 0 015 10.5z" fill="#fbbf24" opacity=".9"/>
+  <!-- handle -->
+  <path d="M8.5 17.5l1.5 5h2.5l-1-5z" fill="#f59e0b"/>
+  <!-- sound waves -->
+  <path d="M19 9.5a5 5 0 010 9" stroke="#fbbf24" stroke-width="1.6" stroke-linecap="round" opacity=".7"/>
+  <path d="M21 7a8 8 0 010 14" stroke="#fbbf24" stroke-width="1.4" stroke-linecap="round" opacity=".4"/>
+</svg> JANGAN LUPA UNTUK MENDOWNLOAD GRATIS — HARAP DAFTARKAN AKUNNYA DULU <span class="lp-marquee-sep">★</span></span><span class="lp-marquee-item"><svg class="toa-icon" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- megaphone body -->
+  <path d="M5 10.5h3.5l9-6v19l-9-6H5a1.5 1.5 0 01-1.5-1.5v-4A1.5 1.5 0 015 10.5z" fill="#fbbf24" opacity=".9"/>
+  <!-- handle -->
+  <path d="M8.5 17.5l1.5 5h2.5l-1-5z" fill="#f59e0b"/>
+  <!-- sound waves -->
+  <path d="M19 9.5a5 5 0 010 9" stroke="#fbbf24" stroke-width="1.6" stroke-linecap="round" opacity=".7"/>
+  <path d="M21 7a8 8 0 010 14" stroke="#fbbf24" stroke-width="1.4" stroke-linecap="round" opacity=".4"/>
+</svg> JANGAN LUPA UNTUK MENDOWNLOAD GRATIS — HARAP DAFTARKAN AKUNNYA DULU <span class="lp-marquee-sep">★</span></span><span class="lp-marquee-item"><svg class="toa-icon" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- megaphone body -->
+  <path d="M5 10.5h3.5l9-6v19l-9-6H5a1.5 1.5 0 01-1.5-1.5v-4A1.5 1.5 0 015 10.5z" fill="#fbbf24" opacity=".9"/>
+  <!-- handle -->
+  <path d="M8.5 17.5l1.5 5h2.5l-1-5z" fill="#f59e0b"/>
+  <!-- sound waves -->
+  <path d="M19 9.5a5 5 0 010 9" stroke="#fbbf24" stroke-width="1.6" stroke-linecap="round" opacity=".7"/>
+  <path d="M21 7a8 8 0 010 14" stroke="#fbbf24" stroke-width="1.4" stroke-linecap="round" opacity=".4"/>
+</svg> JANGAN LUPA UNTUK MENDOWNLOAD GRATIS — HARAP DAFTARKAN AKUNNYA DULU <span class="lp-marquee-sep">★</span></span><span class="lp-marquee-item"><svg class="toa-icon" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- megaphone body -->
+  <path d="M5 10.5h3.5l9-6v19l-9-6H5a1.5 1.5 0 01-1.5-1.5v-4A1.5 1.5 0 015 10.5z" fill="#fbbf24" opacity=".9"/>
+  <!-- handle -->
+  <path d="M8.5 17.5l1.5 5h2.5l-1-5z" fill="#f59e0b"/>
+  <!-- sound waves -->
+  <path d="M19 9.5a5 5 0 010 9" stroke="#fbbf24" stroke-width="1.6" stroke-linecap="round" opacity=".7"/>
+  <path d="M21 7a8 8 0 010 14" stroke="#fbbf24" stroke-width="1.4" stroke-linecap="round" opacity=".4"/>
+</svg> JANGAN LUPA UNTUK MENDOWNLOAD GRATIS — HARAP DAFTARKAN AKUNNYA DULU <span class="lp-marquee-sep">★</span></span><span class="lp-marquee-item"><svg class="toa-icon" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- megaphone body -->
+  <path d="M5 10.5h3.5l9-6v19l-9-6H5a1.5 1.5 0 01-1.5-1.5v-4A1.5 1.5 0 015 10.5z" fill="#fbbf24" opacity=".9"/>
+  <!-- handle -->
+  <path d="M8.5 17.5l1.5 5h2.5l-1-5z" fill="#f59e0b"/>
+  <!-- sound waves -->
+  <path d="M19 9.5a5 5 0 010 9" stroke="#fbbf24" stroke-width="1.6" stroke-linecap="round" opacity=".7"/>
+  <path d="M21 7a8 8 0 010 14" stroke="#fbbf24" stroke-width="1.4" stroke-linecap="round" opacity=".4"/>
+</svg> JANGAN LUPA UNTUK MENDOWNLOAD GRATIS — HARAP DAFTARKAN AKUNNYA DULU <span class="lp-marquee-sep">★</span></span><span class="lp-marquee-item"><svg class="toa-icon" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- megaphone body -->
+  <path d="M5 10.5h3.5l9-6v19l-9-6H5a1.5 1.5 0 01-1.5-1.5v-4A1.5 1.5 0 015 10.5z" fill="#fbbf24" opacity=".9"/>
+  <!-- handle -->
+  <path d="M8.5 17.5l1.5 5h2.5l-1-5z" fill="#f59e0b"/>
+  <!-- sound waves -->
+  <path d="M19 9.5a5 5 0 010 9" stroke="#fbbf24" stroke-width="1.6" stroke-linecap="round" opacity=".7"/>
+  <path d="M21 7a8 8 0 010 14" stroke="#fbbf24" stroke-width="1.4" stroke-linecap="round" opacity=".4"/>
+</svg> JANGAN LUPA UNTUK MENDOWNLOAD GRATIS — HARAP DAFTARKAN AKUNNYA DULU <span class="lp-marquee-sep">★</span></span>
+    </div>
+  </div>
+
+  <!-- HERO -->
+  <div class="lp-hero">
+    <div class="lp-hero-badge"><span class="pulse-dot"></span> Permendikdasmen No. 13 Tahun 2025</div>
+    <h2>Portal <span class="hl">Pembelajaran<br>Mendalam</span></h2>
+    <p>Satu platform lengkap untuk mengakses &amp; mengelola seluruh perangkat ajar sesuai Kurikulum Merdeka — CP, ATP, Modul Ajar, LKPD, Power Point, dan lebih banyak lagi.</p>
+    <div class="lp-hero-cta">
+      <button class="lp-btn-main" onclick="showAuth()">🚀 Mulai Sekarang</button>
+      <button class="lp-btn-sec" onclick="document.getElementById('lp-about').scrollIntoView({behavior:'smooth'})">📖 Pelajari Lebih Lanjut</button>
+    </div>
+  </div>
+
+  <!-- DOC CARDS -->
+  <div class="lp-preview">
+    <div class="lp-doc-card"><div class="lp-doc-ico">📖</div><div class="lp-doc-name">Modul Ajar</div><div class="lp-doc-sub">Pembelajaran</div></div>
+    <div class="lp-doc-card"><div class="lp-doc-ico">🎯</div><div class="lp-doc-name">CP</div><div class="lp-doc-sub">Capaian Pembelajaran</div></div>
+    <div class="lp-doc-card"><div class="lp-doc-ico">📅</div><div class="lp-doc-name">ATP</div><div class="lp-doc-sub">Alur Tujuan</div></div>
+    <div class="lp-doc-card"><div class="lp-doc-ico">📆</div><div class="lp-doc-name">PROSEM</div><div class="lp-doc-sub">Program Semester</div></div>
+    <div class="lp-doc-card"><div class="lp-doc-ico">📋</div><div class="lp-doc-name">PROTA</div><div class="lp-doc-sub">Program Tahunan</div></div>
+    <div class="lp-doc-card"><div class="lp-doc-ico">📝</div><div class="lp-doc-name">KKTP</div><div class="lp-doc-sub">Kriteria Ketercapaian</div></div>
+    <div class="lp-doc-card"><div class="lp-doc-ico">📊</div><div class="lp-doc-name">Power Point</div><div class="lp-doc-sub">Presentasi</div></div>
+    <div class="lp-doc-card"><div class="lp-doc-ico">📋</div><div class="lp-doc-name">LKPD</div><div class="lp-doc-sub">Lembar Kerja</div></div>
+  </div>
+
+  <!-- STATS -->
+  <div id="lp-about"></div>
+
+  <div class="lp-div"><span>✦ Fitur Unggulan ✦</span></div>
+
+  <!-- FEATURES -->
+  <div class="lp-features">
+    <div class="lp-feat"><div class="lp-feat-ico" style="background:rgba(37,99,168,.25)">📂</div><h4>Pustaka Lengkap</h4><p>Ribuan dokumen siap pakai untuk SD, SMP, SMA, dan SMK — dari CP hingga LKPD — tersusun rapi dalam satu tempat.</p></div>
+    <div class="lp-feat"><div class="lp-feat-ico" style="background:rgba(22,163,74,.2)">🔐</div><h4>Akses Berbasis Peran</h4><p>Admin mengelola konten &amp; mengaktivasi guru. Guru mengunduh materi sesuai jenjang &amp; mata pelajaran mereka.</p></div>
+    <div class="lp-feat"><div class="lp-feat-ico" style="background:rgba(232,160,32,.2)">⚡</div><h4>Download Instan</h4><p>Unduh langsung dari Google Drive. Log download tercatat otomatis untuk keperluan pelaporan dan monitoring.</p></div>
+    <div class="lp-feat"><div class="lp-feat-ico" style="background:rgba(147,51,234,.2)">📊</div><h4>Dashboard Analitik</h4><p>Admin memantau statistik download, jumlah guru aktif, dan distribusi materi per jenjang secara real-time.</p></div>
+    <div class="lp-feat"><div class="lp-feat-ico" style="background:rgba(219,39,119,.2)">🎓</div><h4>Kurikulum Merdeka</h4><p>Seluruh dokumen diselaraskan dengan Permendikdasmen No. 13 Tahun 2025 dan prinsip Pembelajaran Mendalam.</p></div>
+    <div class="lp-feat"><div class="lp-feat-ico" style="background:rgba(8,145,178,.2)">☁️</div><h4>Berbasis Cloud</h4><p>Didukung Google Apps Script &amp; Google Sheets. Tanpa biaya server — cukup satu akun Google untuk deploy.</p></div>
+  </div>
+
+  <!-- CTA BOTTOM -->
+  <div class="lp-cta-box">
+    <div class="lp-cta-inner">
+      <div style="font-size:40px;margin-bottom:14px">🚀</div>
+      <h3 style="color:#fff;font-size:21px;font-weight:800;margin-bottom:10px">Siap Menggunakan Portal?</h3>
+      <p style="color:rgba(255,255,255,.55);font-size:13px;margin-bottom:24px;line-height:1.7">Masuk sebagai Admin atau Guru. Belum punya akun? Daftar sekarang dan tunggu aktivasi Admin.</p>
+      <button class="lp-btn-main" onclick="showAuth()">🔑 Masuk ke Portal</button>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="lp-footer">
+    <p><strong>Portal Pembelajaran Mendalam</strong></p>
+    <p>Sesuai Permendikdasmen No. 13 Tahun 2025 · Kurikulum Merdeka</p>
+    <p style="margin-top:5px">Created by <strong>ROBI TRIDANI</strong></p>
+  </div>
+</div>
+
+<!-- SETTING PAGE -->
+<div id="settingPage">
+  <div class="setting-box">
+    <div class="setting-hd">
+      <div class="ico">⚙️</div>
+      <h2>Konfigurasi Awal</h2>
+      <p>Hubungkan aplikasi ke Google Apps Script backend</p>
+    </div>
+    <div class="setting-body">
+      <div class="step-label"><div class="step-num">1</div> Deploy Code.gs sebagai Web App</div>
+      <div class="how-to">
+        <ol>
+          <li>Buka Google Apps Script → paste <code>Code.gs</code></li>
+          <li>Klik <strong>Deploy → New Deployment</strong></li>
+          <li>Pilih tipe: <strong>Web App</strong></li>
+          <li>Execute as: <strong>Me</strong> | Access: <strong>Anyone</strong></li>
+          <li>Klik <strong>Deploy</strong> → copy URL-nya</li>
+        </ol>
+      </div>
+      <div class="step-label"><div class="step-num">2</div> Paste URL Web App di sini</div>
+      <div class="fg">
+        <label>URL Google Apps Script Web App</label>
+        <div class="url-row">
+          <input type="url" id="settingUrl" placeholder="https://script.google.com/macros/s/.../exec">
+          <button class="btn btn-primary" onclick="testAndSaveUrl()">🔌 Tes & Simpan</button>
+        </div>
+        <div id="urlTestResult" style="margin-top:8px"></div>
+      </div>
+      <div class="alert ai" style="font-size:11px">
+        💡 URL disimpan di browser (localStorage). Tidak perlu input ulang kecuali ganti perangkat.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- AUTH -->
+<div id="authPage">
+  <div class="auth-box">
+    <div class="auth-hd">
+      <div class="ico">📚</div>
+      <h2>Portal Pembelajaran Mendalam</h2>
+      <p>Sistem Download CP, ATP, PROSEM, PROTA, KKTP & Modul Ajar</p>
+    </div>
+    <!-- info URL aktif -->
+    <div class="auth-url-info">
+      <span id="authUrlDisplay">-</span>
+    </div>
+    <div class="auth-tabs">
+      <button class="atab active" onclick="switchTab('login')">🔑 Masuk</button>
+      <button class="atab" onclick="switchTab('daftar')">✏️ Daftar Guru</button>
+    </div>
+    <div class="auth-body">
+      <!-- LOGIN -->
+      <div id="tLogin" class="tp active">
+        <div class="fg"><label>Role</label>
+          <select id="lRole" onchange="updateLoginInfo()">
+            <option value="admin">Admin</option>
+            <option value="guru">Guru</option>
+          </select>
+        </div>
+        <div class="fg"><label>Username</label><input type="text" id="lUser" placeholder="Username"></div>
+        <div class="fg"><label>Password</label><input type="password" id="lPass" placeholder="Password" onkeydown="if(event.key==='Enter')doLogin()"></div>
+        <button class="btn btn-primary btn-block" onclick="doLogin()">Masuk</button>
+        <div id="lInfo" class="alert ai" style="display:none;margin-top:10px"></div>
+        <hr class="divider">
+        <p style="font-size:11px;color:var(--text-muted);text-align:center">CREATED BY ROBI TRIDANI</p>
+      </div>
+      <!-- DAFTAR -->
+      <div id="tDaftar" class="tp">
+        <div class="alert aw">⚠️ Akun akan diaktivasi Admin sebelum bisa mengakses download.</div>
+        <div class="fr2">
+          <div class="fg"><label>Nama Lengkap *</label><input type="text" id="dNama" placeholder="Nama lengkap"></div>
+          <div class="fg"><label>NIP</label><input type="text" id="dNip" placeholder="Opsional"></div>
+        </div>
+        <div class="fr2">
+          <div class="fg"><label>Email *</label><input type="email" id="dEmail" placeholder="Email aktif"></div>
+          <div class="fg"><label>Sekolah *</label><input type="text" id="dSekolah" placeholder="Nama sekolah"></div>
+        </div>
+        <div class="fr2">
+          <div class="fg"><label>Jenjang *</label>
+            <select id="dJenjang" onchange="loadMapelDaftar()">
+              <option value="">-- Pilih --</option>
+              <option>SD</option><option>SMP</option><option>SMA</option><option>SMK</option>
+            </select>
+          </div>
+          <div class="fg"><label>Mata Pelajaran *</label><select id="dMapel"><option value="">-- Pilih Jenjang --</option></select></div>
+        </div>
+        <div class="fr2">
+          <div class="fg"><label>Username *</label><input type="text" id="dUser" placeholder="Username login"></div>
+          <div class="fg"><label>Password *</label><input type="password" id="dPass" placeholder="Min. 6 karakter"></div>
+        </div>
+        <button class="btn btn-accent btn-block" onclick="doDaftar()">📝 Daftar Sekarang</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="appPage">
+  <nav class="sidebar" id="sidebar">
+    <div class="sb-logo">
+      <span class="li">📚</span>
+      <div class="lt"><h3>Portal PM</h3><span>Pembelajaran Mendalam</span></div>
+    </div>
+    <div class="sb-user">
+      <div class="sb-av" id="sbAv">A</div>
+      <div class="sb-inf">
+        <div class="sb-nm" id="sbNm">-</div>
+        <div class="sb-rl" id="sbRl">-</div>
+      </div>
+    </div>
+    <div class="sb-nav" id="sbNav"></div>
+    <div class="sb-foot">
+      <button class="btn btn-outline btn-block btn-sm" onclick="logout()">🚪 Keluar</button>
+    </div>
+  </nav>
+
+  <main class="main">
+    <div class="topbar">
+      <h2 id="pgTitle">Dashboard</h2>
+      <div style="font-size:12px;color:var(--text-muted)" id="topInfo"></div>
+    </div>
+
+    <div class="section" id="secDB">
+      <div class="stats-grid" id="sgrid"></div>
+      <div class="card">
+        <div class="card-hd"><span class="card-title">📊 Statistik per Jenis Dokumen</span></div>
+        <div id="jenisStat"></div>
+      </div>
+      <div class="card">
+        <div class="card-hd"><span class="card-title">📥 Download Terbaru</span></div>
+        <div class="tw" id="recentLog"></div>
+      </div>
+    </div>
+
+    <div class="section" id="secGuru">
+      <div class="card">
+        <div class="card-hd">
+          <span class="card-title">👨‍🏫 Kelola Guru</span>
+          <div style="display:flex;gap:7px;flex-wrap:wrap">
+            <select id="fStGuru" onchange="renderGuru()" style="max-width:160px">
+              <option value="">Semua Status</option>
+              <option value="Menunggu">Menunggu Aktivasi</option>
+              <option value="Aktif">Aktif</option>
+              <option value="Ditolak">Ditolak</option>
+            </select>
+            <button class="btn btn-primary btn-sm" onclick="loadGuru()">🔄 Refresh</button>
+          </div>
+        </div>
+        <div class="tw" id="guruWrap"><div class="loading">Memuat...</div></div>
+      </div>
+    </div>
+
+    <div class="section" id="secMA"><div class="card">
+      <div class="jenis-banner bg-MA"><div><h3>📖 Modul Ajar</h3><p>Upload & kelola dokumen Modul Ajar</p></div>
+        <button class="btn btn-sm" style="background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.4)" onclick="showAddModal('Modul Ajar')">➕ Tambah</button>
+      </div>
+      <div class="fb"><select id="maJ" onchange="loadSMapel('maJ','maM');loadJenisMateri('Modul Ajar')"><option value="">Semua Jenjang</option><option>SD</option><option>SMP</option><option>SMA</option><option>SMK</option></select>
+        <select id="maM" onchange="loadJenisMateri('Modul Ajar')"><option value="">Semua Mapel</option></select>
+        <input type="text" id="maS" placeholder="🔍 Cari..." oninput="loadJenisMateri('Modul Ajar')" style="max-width:190px">
+      </div><div id="wrapMA"><div class="loading">Memuat...</div></div>
+    </div></div>
+
+    <div class="section" id="secCP"><div class="card">
+      <div class="jenis-banner bg-CP"><div><h3>🎯 Capaian Pembelajaran (CP)</h3><p>Upload & kelola dokumen CP</p></div>
+        <button class="btn btn-sm" style="background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.4)" onclick="showAddModal('CP')">➕ Tambah</button>
+      </div>
+      <div class="fb"><select id="cpJ" onchange="loadSMapel('cpJ','cpM');loadJenisMateri('CP')"><option value="">Semua Jenjang</option><option>SD</option><option>SMP</option><option>SMA</option><option>SMK</option></select>
+        <select id="cpM" onchange="loadJenisMateri('CP')"><option value="">Semua Mapel</option></select>
+        <input type="text" id="cpS" placeholder="🔍 Cari..." oninput="loadJenisMateri('CP')" style="max-width:190px">
+      </div><div id="wrapCP"><div class="loading">Memuat...</div></div>
+    </div></div>
+
+    <div class="section" id="secATP"><div class="card">
+      <div class="jenis-banner bg-ATP"><div><h3>📅 Alur Tujuan Pembelajaran (ATP)</h3><p>Upload & kelola dokumen ATP</p></div>
+        <button class="btn btn-sm" style="background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.4)" onclick="showAddModal('ATP')">➕ Tambah</button>
+      </div>
+      <div class="fb"><select id="atpJ" onchange="loadSMapel('atpJ','atpM');loadJenisMateri('ATP')"><option value="">Semua Jenjang</option><option>SD</option><option>SMP</option><option>SMA</option><option>SMK</option></select>
+        <select id="atpM" onchange="loadJenisMateri('ATP')"><option value="">Semua Mapel</option></select>
+        <input type="text" id="atpS" placeholder="🔍 Cari..." oninput="loadJenisMateri('ATP')" style="max-width:190px">
+      </div><div id="wrapATP"><div class="loading">Memuat...</div></div>
+    </div></div>
+
+    <div class="section" id="secPROSEM"><div class="card">
+      <div class="jenis-banner bg-PROSEM"><div><h3>📆 Program Semester (PROSEM)</h3><p>Upload & kelola dokumen PROSEM</p></div>
+        <button class="btn btn-sm" style="background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.4)" onclick="showAddModal('PROSEM')">➕ Tambah</button>
+      </div>
+      <div class="fb"><select id="prosemJ" onchange="loadSMapel('prosemJ','prosemM');loadJenisMateri('PROSEM')"><option value="">Semua Jenjang</option><option>SD</option><option>SMP</option><option>SMA</option><option>SMK</option></select>
+        <select id="prosemM" onchange="loadJenisMateri('PROSEM')"><option value="">Semua Mapel</option></select>
+        <input type="text" id="prosemS" placeholder="🔍 Cari..." oninput="loadJenisMateri('PROSEM')" style="max-width:190px">
+      </div><div id="wrapPROSEM"><div class="loading">Memuat...</div></div>
+    </div></div>
+
+    <div class="section" id="secPROTA"><div class="card">
+      <div class="jenis-banner bg-PROTA"><div><h3>📋 Program Tahunan (PROTA)</h3><p>Upload & kelola dokumen PROTA</p></div>
+        <button class="btn btn-sm" style="background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.4)" onclick="showAddModal('PROTA')">➕ Tambah</button>
+      </div>
+      <div class="fb"><select id="protaJ" onchange="loadSMapel('protaJ','protaM');loadJenisMateri('PROTA')"><option value="">Semua Jenjang</option><option>SD</option><option>SMP</option><option>SMA</option><option>SMK</option></select>
+        <select id="protaM" onchange="loadJenisMateri('PROTA')"><option value="">Semua Mapel</option></select>
+        <input type="text" id="protaS" placeholder="🔍 Cari..." oninput="loadJenisMateri('PROTA')" style="max-width:190px">
+      </div><div id="wrapPROTA"><div class="loading">Memuat...</div></div>
+    </div></div>
+
+    <div class="section" id="secKKTP"><div class="card">
+      <div class="jenis-banner bg-KKTP"><div><h3>📝 Kriteria Ketercapaian Tujuan Pembelajaran (KKTP)</h3><p>Upload & kelola dokumen KKTP</p></div>
+        <button class="btn btn-sm" style="background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.4)" onclick="showAddModal('KKTP')">➕ Tambah</button>
+      </div>
+      <div class="fb"><select id="kktpJ" onchange="loadSMapel('kktpJ','kktpM');loadJenisMateri('KKTP')"><option value="">Semua Jenjang</option><option>SD</option><option>SMP</option><option>SMA</option><option>SMK</option></select>
+        <select id="kktpM" onchange="loadJenisMateri('KKTP')"><option value="">Semua Mapel</option></select>
+        <input type="text" id="kktpS" placeholder="🔍 Cari..." oninput="loadJenisMateri('KKTP')" style="max-width:190px">
+      </div><div id="wrapKKTP"><div class="loading">Memuat...</div></div>
+    </div></div>
+
+
+    <div class="section" id="secPP"><div class="card">
+      <div class="jenis-banner bg-PP"><div><h3>📊 Power Point (PPTX)</h3><p>Upload & kelola file presentasi Power Point</p></div>
+        <button class="btn btn-sm" style="background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.4)" onclick="showAddModal('Power Point')">➕ Tambah</button>
+      </div>
+      <div class="fb"><select id="ppJ" onchange="loadSMapel('ppJ','ppM');loadJenisMateri('Power Point')"><option value="">Semua Jenjang</option><option>SD</option><option>SMP</option><option>SMA</option><option>SMK</option></select>
+        <select id="ppM" onchange="loadJenisMateri('Power Point')"><option value="">Semua Mapel</option></select>
+        <input type="text" id="ppS" placeholder="🔍 Cari..." oninput="loadJenisMateri('Power Point')" style="max-width:190px">
+      </div><div id="wrapPP"><div class="loading">Memuat...</div></div>
+    </div></div>
+
+    <div class="section" id="secLKPD"><div class="card">
+      <div class="jenis-banner bg-LKPD"><div><h3>📋 Lembar Kerja Peserta Didik (LKPD)</h3><p>Upload & kelola dokumen LKPD</p></div>
+        <button class="btn btn-sm" style="background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.4)" onclick="showAddModal('LKPD')">➕ Tambah</button>
+      </div>
+      <div class="fb"><select id="lkpdJ" onchange="loadSMapel('lkpdJ','lkpdM');loadJenisMateri('LKPD')"><option value="">Semua Jenjang</option><option>SD</option><option>SMP</option><option>SMA</option><option>SMK</option></select>
+        <select id="lkpdM" onchange="loadJenisMateri('LKPD')"><option value="">Semua Mapel</option></select>
+        <input type="text" id="lkpdS" placeholder="🔍 Cari..." oninput="loadJenisMateri('LKPD')" style="max-width:190px">
+      </div><div id="wrapLKPD"><div class="loading">Memuat...</div></div>
+    </div></div>
+    <div class="section" id="secDL">
+      <div class="card">
+        <div class="card-hd"><span class="card-title">📥 Download Materi Pembelajaran Mendalam</span></div>
+        <div class="gtabs" id="guruGtabs"></div>
+        <div class="fb">
+          <select id="gfJ" onchange="loadSMapel('gfJ','gfM');loadGMateri()"><option value="">Semua Jenjang</option><option>SD</option><option>SMP</option><option>SMA</option><option>SMK</option></select>
+          <select id="gfM" onchange="loadGMateri()"><option value="">Semua Mapel</option></select>
+          <input type="text" id="gfS" placeholder="🔍 Cari materi..." oninput="loadGMateri()" style="max-width:200px">
+        </div>
+        <div id="gMWrap"><div class="loading">Memuat...</div></div>
+      </div>
+    </div>
+
+    <div class="section" id="secRw">
+      <div class="card">
+        <div class="card-hd"><span class="card-title">📋 Riwayat Download Saya</span><button class="btn btn-primary btn-sm" onclick="loadRiwayat()">🔄</button></div>
+        <div class="tw" id="rwWrap"><div class="loading">Memuat...</div></div>
+      </div>
+    </div>
+
+    <div class="section" id="secLog">
+      <div class="card">
+        <div class="card-hd"><span class="card-title">📊 Log Semua Download</span><button class="btn btn-primary btn-sm" onclick="loadLog()">🔄</button></div>
+        <div class="tw" id="logWrap"><div class="loading">Memuat...</div></div>
+      </div>
+    </div>
+
+    <div class="section" id="secPf">
+      <div class="card" style="max-width:460px">
+        <div class="card-hd"><span class="card-title">👤 Profil Saya</span></div>
+        <div id="pfContent"></div>
+        <hr class="divider">
+        <h4 style="font-size:13px;font-weight:700;margin-bottom:10px">🔐 Ganti Password</h4>
+        <div class="fg"><label>Password Lama</label><input type="password" id="pOld" placeholder="Password lama"></div>
+        <div class="fg"><label>Password Baru</label><input type="password" id="pNew" placeholder="Min. 6 karakter"></div>
+        <div class="fg"><label>Konfirmasi</label><input type="password" id="pCnf" placeholder="Ulangi password baru"></div>
+        <button class="btn btn-primary" onclick="changePass()">Simpan</button>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- MODAL TAMBAH/EDIT MATERI -->
+<div class="mo" id="mModal" style="display:none">
+  <div class="md">
+    <div class="md-hd">
+      <h3 id="mMTitle">Tambah Materi</h3>
+      <button class="btn-x" onclick="closeMModal()">✕</button>
+    </div>
+    <div class="md-bd">
+      <input type="hidden" id="mId">
+      <div class="fg">
+        <label>Jenis Dokumen</label>
+        <input type="text" id="mJenisDisplay" readonly style="background:#f1f5f9;font-weight:700;color:var(--primary)">
+        <input type="hidden" id="mJenis">
+      </div>
+      <div class="fr2">
+        <div class="fg"><label>Jenjang *</label>
+          <select id="mJ" onchange="loadMModalMapel()">
+            <option value="">-- Pilih --</option>
+            <option>SD</option><option>SMP</option><option>SMA</option><option>SMK</option>
+          </select>
+        </div>
+        <div class="fg"><label>Mata Pelajaran *</label><select id="mM"><option value="">-- Pilih Jenjang dulu --</option></select></div>
+      </div>
+      <div class="fg" id="topikRow" style="display:none">
+        <label>Topik Pembelajaran Mendalam</label>
+        <select id="mTopik">
+          <option value="-">-- Pilih Topik --</option>
+          <option>Pengalaman Belajar Konkret</option><option>Refleksi dan Metakognisi</option>
+          <option>Konseptualisasi Abstrak</option><option>Eksperimentasi Aktif</option>
+          <option>Berpikir Kritis dan Analitis</option><option>Kolaborasi dan Komunikasi</option>
+          <option>Pemecahan Masalah Nyata</option><option>Kreativitas dan Inovasi</option>
+          <option>Literasi Digital</option><option>Projek Penguatan Profil Pelajar Pancasila</option>
+        </select>
+      </div>
+      <div class="fg"><label>Judul *</label><input type="text" id="mJudul" placeholder="Judul dokumen"></div>
+      <div class="fg"><label>Deskripsi</label><textarea id="mDesc" placeholder="Deskripsi singkat..."></textarea></div>
+      <div class="fr2">
+        <div class="fg"><label>Link Download *</label><input type="url" id="mLink" placeholder="https://drive.google.com/..."></div>
+        <div class="fg"><label>Tipe File</label>
+          <select id="mTipe"><option>PDF</option><option>DOCX</option><option>PPTX</option><option>XLSX</option><option>ZIP</option></select>
+        </div>
+      </div>
+      <div class="fg"><label>Ukuran File</label><input type="text" id="mUkuran" placeholder="Contoh: 2.5 MB"></div>
+    </div>
+    <div class="md-ft">
+      <button class="btn btn-outline" onclick="closeMModal()">Batal</button>
+      <button class="btn btn-accent" onclick="saveMateri()">💾 Simpan</button>
+    </div>
+  </div>
+</div>
+
+<div id="tc"></div>
+
+<script>
+// ============================================================
+// CONFIG
+// ============================================================
+const JENIS_LIST = ['Modul Ajar','CP','ATP','PROSEM','PROTA','KKTP','Power Point','LKPD'];
+const JENIS_ICON = {'Modul Ajar':'📖','CP':'🎯','ATP':'📅','PROSEM':'📆','PROTA':'📋','KKTP':'📝','Power Point':'📊','LKPD':'📋'};
+const JENIS_KEY  = {'Modul Ajar':'MA','CP':'CP','ATP':'ATP','PROSEM':'PROSEM','PROTA':'PROTA','KKTP':'KKTP','Power Point':'PP','LKPD':'LKPD'};
+const JENIS_SEC  = {'Modul Ajar':'secMA','CP':'secCP','ATP':'secATP','PROSEM':'secPROSEM','PROTA':'secPROTA','KKTP':'secKKTP','Power Point':'secPP','LKPD':'secLKPD'};
+const JENIS_WRAP = {'Modul Ajar':'wrapMA','CP':'wrapCP','ATP':'wrapATP','PROSEM':'wrapPROSEM','PROTA':'wrapPROTA','KKTP':'wrapKKTP','Power Point':'wrapPP','LKPD':'wrapLKPD'};
+const JENIS_FILTER = {
+  'Modul Ajar':{j:'maJ',m:'maM',s:'maS'},'CP':{j:'cpJ',m:'cpM',s:'cpS'},
+  'ATP':{j:'atpJ',m:'atpM',s:'atpS'},'PROSEM':{j:'prosemJ',m:'prosemM',s:'prosemS'},
+  'PROTA':{j:'protaJ',m:'protaM',s:'protaS'},'KKTP':{j:'kktpJ',m:'kktpM',s:'kktpS'},
+  'Power Point':{j:'ppJ',m:'ppM',s:'ppS'},'LKPD':{j:'lkpdJ',m:'lkpdM',s:'lkpdS'}
+};
+// ============================================================
+// ⚙️ KONFIGURASI — Ganti URL di sini setelah deploy GAS
+// ============================================================
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbxzab0f-c1GdSHzYC-iSBluUa2ZRwCRQ9BDZiNASdkPa72k3bUGGeWDMdA4yMe3dg28sQ/exec';
+// ============================================================
+
+let SESSION  = null;
+let ALL_GURU = [];
+let GURU_JENIS = 'Modul Ajar';
+
+// ============================================================
+// INIT
+// ============================================================
+window.onload = () => {
+  setTimeout(() => {
+    document.getElementById('splash').style.display = 'none';
+    showLanding();
+  }, 2200);
+};
+
+function showLanding() {
+  ['splash','authPage','appPage','settingPage'].forEach(hide);
+  document.getElementById('landingPage').style.display = 'block';
+  window.scrollTo(0,0);
+  initBalls();
+}
+
+// ============================================================
+// SETTING PAGE
+// ============================================================
+function showSetting() {
+  hide('splash'); hide('authPage'); hide('appPage');
+  document.getElementById('settingPage').style.display = 'flex';
+  document.getElementById('settingUrl').value = GAS_URL;
+  document.getElementById('urlTestResult').innerHTML = '';
+}
+
+async function testAndSaveUrl() {
+  const url = document.getElementById('settingUrl').value.trim();
+  if (!url) { toast('Paste URL Web App dulu','w'); return; }
+  const el = document.getElementById('urlTestResult');
+  el.innerHTML = '<div class="alert ai">⏳ Menghubungkan...</div>';
+  try {
+    const res = await fetchGAS(url, 'init', {});
+    if (res && res.status === 'ok') {
+      GAS_URL = url;
+      localStorage.setItem(LS_URL_KEY, url);
+      el.innerHTML = '<div class="alert as">✅ Berhasil terhubung! Menuju halaman login...</div>';
+      setTimeout(() => { showAuth(); }, 1200);
+    } else {
+      el.innerHTML = `<div class="alert aw">❌ Respons tidak valid: ${(res&&res.message)||'Unknown'}</div>`;
+    }
+  } catch(err) {
+    el.innerHTML = `<div class="alert aw">❌ Gagal terhubung. Pastikan URL benar & access = Anyone.<br><small>${err.message}</small></div>`;
+  }
+}
+
+// ============================================================
+// API — fetch ke GAS Web App
+// ============================================================
+async function fetchGAS(url, action, data) {
+  // GAS Web App hanya support GET dengan param, atau POST
+  // Kita pakai GET dengan ?action=...&data=... untuk simplicity
+  const params = new URLSearchParams({ action, data: JSON.stringify(data) });
+  const resp = await fetch(`${url}?${params}`, {
+    method: 'GET',
+    redirect: 'follow'
+  });
+  if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+  return await resp.json();
+}
+
+function api(action, data) {
+  return fetchGAS(GAS_URL, action, data).catch(err => ({
+    status: 'error',
+    message: 'Koneksi gagal: ' + err.message
+  }));
+}
+
+// ============================================================
+// AUTH
+// ============================================================
+function showAuth() {
+  ['settingPage','appPage','landingPage'].forEach(hide);
+  api('init', {});
+  document.getElementById('authPage').style.display = 'flex';
+  const display = GAS_URL.length > 50 ? GAS_URL.substring(0,47)+'...' : GAS_URL;
+  document.getElementById('authUrlDisplay').textContent = '🔗 ' + display;
+}
+
+function hide(id) {
+  const el = document.getElementById(id);
+  if(el) el.style.display = 'none';
+}
+
+function switchTab(t) {
+  document.querySelectorAll('.atab').forEach((el,i) =>
+    el.classList.toggle('active', (i===0&&t==='login')||(i===1&&t==='daftar')));
+  document.getElementById('tLogin').classList.toggle('active', t==='login');
+  document.getElementById('tDaftar').classList.toggle('active', t==='daftar');
+}
+
+function updateLoginInfo() {
+  const r  = document.getElementById('lRole').value;
+  const el = document.getElementById('lInfo');
+  el.style.display = r==='guru' ? 'block' : 'none';
+  el.textContent = '💡 Guru harus daftar terlebih dahulu dan menunggu aktivasi Admin.';
+}
+
+async function doLogin() {
+  const role     = document.getElementById('lRole').value;
+  const username = document.getElementById('lUser').value.trim();
+  const password = document.getElementById('lPass').value;
+  if (!username||!password) { toast('Isi username & password','w'); return; }
+  const res = await api(role==='admin'?'login':'loginGuru', {username, password});
+  if (res.status==='ok') { SESSION={...res}; showApp(); }
+  else toast(res.message||'Login gagal','e');
+}
+
+async function loadMapelDaftar() {
+  const j   = document.getElementById('dJenjang').value;
+  const sel = document.getElementById('dMapel');
+  sel.innerHTML = '<option value="">-- Pilih Mapel --</option>';
+  if (!j) return;
+  const res = await api('getMapelByJenjang', {jenjang:j});
+  if (res.status==='ok') res.data.forEach(m => sel.innerHTML+=`<option>${m}</option>`);
+}
+
+async function doDaftar() {
+  const f={nama:'dNama',email:'dEmail',sekolah:'dSekolah',jenjang:'dJenjang',mapel:'dMapel',username:'dUser',password:'dPass'};
+  const d={nip:document.getElementById('dNip').value.trim()};
+  for(const[k,id]of Object.entries(f)){
+    d[k]=document.getElementById(id).value.trim();
+    if(!d[k]){toast('Lengkapi semua field wajib','w');return;}
+  }
+  if(d.password.length<6){toast('Password min. 6 karakter','w');return;}
+  const res=await api('daftarGuru',d);
+  if(res.status==='ok'){toast(res.message,'s');switchTab('login');}
+  else toast(res.message,'e');
+}
+
+// ============================================================
+// APP
+// ============================================================
+function showApp() {
+  hide('authPage'); hide('settingPage');
+  document.getElementById('appPage').style.display = 'block';
+  const isAdmin = SESSION.role==='admin';
+  document.getElementById('sbNm').textContent  = SESSION.nama;
+  document.getElementById('sbRl').textContent  = isAdmin?'👑 Administrator':'👨‍🏫 Guru';
+  document.getElementById('sbAv').textContent  = SESSION.nama[0].toUpperCase();
+  document.getElementById('topInfo').textContent = `Selamat datang, ${SESSION.nama}`;
+  buildNav(isAdmin);
+  if (isAdmin) { loadDashboard(); navTo('secDB','Dashboard'); }
+  else { buildGuruTabs(); loadGMateri(); navTo('secDL','Download Materi'); }
+}
+
+function buildNav(isAdmin) {
+  const nav = document.getElementById('sbNav');
+  if (isAdmin) {
+    const jenisNav = JENIS_LIST.map(j => {
+      const k = JENIS_KEY[j];
+      return `<div class="ni-sub" id="nav-${k}" onclick="navJenis('${j}',this)">
+        <div class="dot dot-${k}"></div>${JENIS_ICON[j]} ${j}
+      </div>`;
+    }).join('');
+    nav.innerHTML = `
+      <div class="nsec">Admin</div>
+      <div class="ni active" id="navDB" onclick="navTo('secDB','Dashboard',this);loadDashboard()"><span class="ico">📊</span> Dashboard</div>
+      <div class="ni" onclick="navTo('secGuru','Kelola Guru',this);loadGuru()"><span class="ico">👨‍🏫</span> Kelola Guru</div>
+      <div class="nsec" style="margin-top:6px">Upload Materi</div>
+      ${jenisNav}
+      <div class="nsec" style="margin-top:6px">Laporan</div>
+      <div class="ni" onclick="navTo('secLog','Log Download',this);loadLog()"><span class="ico">📋</span> Log Download</div>`;
+  } else {
+    nav.innerHTML = `
+      <div class="nsec">Guru</div>
+      <div class="ni active" onclick="navTo('secDL','Download Materi',this);buildGuruTabs();loadGMateri()"><span class="ico">📥</span> Download Materi</div>
+      <div class="ni" onclick="navTo('secRw','Riwayat Download',this);loadRiwayat()"><span class="ico">📋</span> Riwayat</div>
+      <div class="ni" onclick="navTo('secPf','Profil Saya',this);loadProfil()"><span class="ico">👤</span> Profil Saya</div>`;
+  }
+}
+
+function navTo(sec, title, el) {
+  document.querySelectorAll('.ni,.ni-sub').forEach(n=>n.classList.remove('active'));
+  if(el) el.classList.add('active');
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.getElementById(sec).classList.add('active');
+  document.getElementById('pgTitle').textContent = title;
+}
+
+function navJenis(jenis, el) {
+  document.querySelectorAll('.ni,.ni-sub').forEach(n=>n.classList.remove('active'));
+  if(el) el.classList.add('active');
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.getElementById(JENIS_SEC[jenis]).classList.add('active');
+  document.getElementById('pgTitle').textContent = `${JENIS_ICON[jenis]} ${jenis}`;
+  loadJenisMateri(jenis);
+}
+
+function logout() {
+  SESSION=null;
+  hide('appPage');
+  document.getElementById('lUser').value='';
+  document.getElementById('lPass').value='';
+  showLanding();
+}
+
+// ============================================================
+// DASHBOARD
+// ============================================================
+async function loadDashboard() {
+  const res = await api('getDashboard',{});
+  if(res.status!=='ok') return;
+  const d = res.data;
+  document.getElementById('sgrid').innerHTML=`
+    <div class="sc"><span class="si">👨‍🏫</span><div><div class="sv">${d.totalGuru}</div><div class="sl">Guru Aktif</div></div></div>
+    <div class="sc"><span class="si">⏳</span><div><div class="sv">${d.guruMenunggu}</div><div class="sl">Menunggu Aktivasi</div></div></div>
+    <div class="sc"><span class="si">📂</span><div><div class="sv">${d.totalMateri}</div><div class="sl">Total Materi</div></div></div>
+    <div class="sc"><span class="si">📥</span><div><div class="sv">${d.totalDownload}</div><div class="sl">Total Download</div></div></div>
+    ${Object.entries(d.byJenjang||{}).map(([j,n])=>`<div class="sc"><span class="si">🏫</span><div><div class="sv">${n}</div><div class="sl">Materi ${j}</div></div></div>`).join('')}`;
+  const bj=d.byJenis||{};
+  document.getElementById('jenisStat').innerHTML=`
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px">
+      ${JENIS_LIST.map(j=>{
+        const k=JENIS_KEY[j];
+        return `<div style="text-align:center;padding:14px 10px;border-radius:8px;border:2px solid #e2e8f0;cursor:pointer" onclick="navJenis('${j}',document.getElementById('nav-${k}'))">
+          <div style="font-size:24px;margin-bottom:4px">${JENIS_ICON[j]}</div>
+          <div style="font-size:22px;font-weight:700;color:var(--primary)">${bj[j]||0}</div>
+          <div style="font-size:10px;color:var(--text-muted);font-weight:600">${j}</div>
+        </div>`;
+      }).join('')}
+    </div>`;
+  const rl=d.recentLog||[];
+  document.getElementById('recentLog').innerHTML=rl.length?`
+    <table><tr><th>Guru</th><th>Materi</th><th>Jenis</th><th>Jenjang</th><th>Mapel</th><th>Waktu</th></tr>
+    ${rl.map(r=>`<tr><td>${r.NamaGuru||'-'}</td><td>${r.JudulMateri||'-'}</td><td>${jenisBadge(r.JenisDokumen)}</td><td><span class="badge badge-info">${r.Jenjang||'-'}</span></td><td>${r.MataPelajaran||'-'}</td><td>${fmtDate(r.TanggalDownload)}</td></tr>`).join('')}
+    </table>`:'<div class="empty"><div class="ei">📭</div><p>Belum ada aktivitas</p></div>';
+}
+
+// ============================================================
+// GURU MANAGEMENT
+// ============================================================
+async function loadGuru(){
+  document.getElementById('guruWrap').innerHTML='<div class="loading">Memuat...</div>';
+  const res=await api('getAllGuru',{});
+  if(res.status==='ok'){ALL_GURU=res.data;renderGuru();}
+}
+function renderGuru(){
+  const fs=document.getElementById('fStGuru').value;
+  let d=ALL_GURU; if(fs) d=d.filter(g=>g.Status===fs);
+  if(!d.length){document.getElementById('guruWrap').innerHTML='<div class="empty"><div class="ei">👨‍🏫</div><p>Tidak ada data</p></div>';return;}
+  document.getElementById('guruWrap').innerHTML=`<table>
+    <tr><th>#</th><th>Nama / Email</th><th>NIP</th><th>Sekolah</th><th>Jenjang</th><th>Mata Pelajaran</th><th>Status</th><th>Terdaftar</th><th>Aksi</th></tr>
+    ${d.map((g,i)=>`<tr>
+      <td>${i+1}</td>
+      <td><strong>${g.Nama}</strong><br><small style="color:var(--text-muted)">${g.Email||''}</small></td>
+      <td>${g.NIP||'-'}</td><td>${g.Sekolah||'-'}</td>
+      <td><span class="badge badge-primary">${g.Jenjang||'-'}</span></td>
+      <td>${g.MataPelajaran||'-'}</td>
+      <td>${stBadge(g.Status)}</td>
+      <td>${fmtDate(g.TanggalDaftar)}</td>
+      <td><div class="gar">
+        ${g.Status==='Menunggu'?`<button class="btn btn-success btn-sm" onclick="aktivasiGuru('${g.ID}')">✅</button><button class="btn btn-danger btn-sm" onclick="tolakGuru('${g.ID}')">❌</button>`:''}
+        ${g.Status==='Ditolak'?`<button class="btn btn-success btn-sm" onclick="aktivasiGuru('${g.ID}')">✅ Aktifkan</button>`:''}
+        ${g.Status==='Aktif'?`<button class="btn btn-warn btn-sm" onclick="tolakGuru('${g.ID}')">🚫</button>`:''}
+        <button class="btn btn-outline btn-sm" onclick="hapusGuru('${g.ID}','${esc(g.Nama)}')">🗑️</button>
+      </div></td>
+    </tr>`).join('')}
+  </table>`;
+}
+async function aktivasiGuru(id){const res=await api('aktivasiGuru',{guruId:id,adminNama:SESSION.nama});if(res.status==='ok'){toast(res.message,'s');loadGuru();loadDashboard();}else toast(res.message,'e');}
+async function tolakGuru(id){if(!confirm('Yakin menolak/nonaktifkan?'))return;const res=await api('tolakGuru',{guruId:id});if(res.status==='ok'){toast(res.message,'s');loadGuru();}else toast(res.message,'e');}
+async function hapusGuru(id,nama){if(!confirm(`Hapus guru "${nama}"?`))return;const res=await api('hapusGuru',{guruId:id});if(res.status==='ok'){toast(res.message,'s');loadGuru();}else toast(res.message,'e');}
+
+// ============================================================
+// MATERI ADMIN
+// ============================================================
+async function loadSMapel(jId, mId) {
+  const j   = document.getElementById(jId).value;
+  const sel = document.getElementById(mId);
+  sel.innerHTML = '<option value="">Semua Mapel</option>';
+  if(!j) return;
+  const res = await api('getMapelByJenjang',{jenjang:j});
+  if(res.status==='ok') res.data.forEach(m=>sel.innerHTML+=`<option>${m}</option>`);
+}
+
+async function loadJenisMateri(jenis) {
+  const f      = JENIS_FILTER[jenis];
+  const wrapId = JENIS_WRAP[jenis];
+  document.getElementById(wrapId).innerHTML='<div class="loading">Memuat...</div>';
+  const res = await api('getMateri',{jenis, jenjang:document.getElementById(f.j).value, mapel:document.getElementById(f.m).value, search:document.getElementById(f.s).value});
+  if(res.status!=='ok'){document.getElementById(wrapId).innerHTML='<div class="empty"><div class="ei">⚠️</div><p>Gagal memuat</p></div>';return;}
+  const d=res.data||[]; const k=JENIS_KEY[jenis];
+  if(!d.length){
+    document.getElementById(wrapId).innerHTML=`<div class="empty"><div class="ei">${JENIS_ICON[jenis]}</div><p>Belum ada dokumen ${jenis}.<br><button class="btn btn-sm" style="margin-top:8px;background:var(--primary);color:#fff" onclick="showAddModal('${jenis}')">➕ Tambah ${jenis} Pertama</button></p></div>`;
+    return;
+  }
+  document.getElementById(wrapId).innerHTML=`<div class="tw"><table>
+    <tr><th>#</th><th>Judul</th><th>Jenjang</th><th>Mata Pelajaran</th>${jenis==='Modul Ajar'?'<th>Topik</th>':''}<th>Tipe</th><th>Ukuran</th><th>Download</th><th>Aksi</th></tr>
+    ${d.map((m,i)=>`<tr>
+      <td>${i+1}</td>
+      <td><strong style="font-size:12px">${m.Judul}</strong><br><small style="color:var(--text-muted);font-size:10px">${m.Deskripsi?m.Deskripsi.substring(0,60)+'...':''}</small></td>
+      <td><span class="badge badge-info">${m.Jenjang}</span></td><td>${m.MataPelajaran}</td>
+      ${jenis==='Modul Ajar'?`<td style="font-size:11px;color:var(--text-muted);max-width:120px">${m.Topik&&m.Topik!=='-'?m.Topik:'-'}</td>`:''}
+      <td><span class="badge badge-${k}">${m.TipeFile||'PDF'}</span></td>
+      <td style="font-size:11px;color:var(--text-muted)">${m.Ukuran||'-'}</td>
+      <td>📥 ${m.JumlahDownload||0}</td>
+      <td><div class="gar">
+        <button class="btn btn-primary btn-sm" onclick="editMateri('${m.ID}','${jenis}')">✏️ Edit</button>
+        <button class="btn btn-danger btn-sm" onclick="hapusMateri('${m.ID}','${esc(m.Judul)}','${jenis}')">🗑️</button>
+      </div></td>
+    </tr>`).join('')}
+  </table></div>`;
+}
+
+// ============================================================
+// MODAL MATERI
+// ============================================================
+function showAddModal(jenis) {
+  document.getElementById('mMTitle').textContent = `Tambah ${jenis}`;
+  document.getElementById('mId').value='';
+  document.getElementById('mJenis').value=jenis;
+  document.getElementById('mJenisDisplay').value=`${JENIS_ICON[jenis]} ${jenis}`;
+  ['mJudul','mDesc','mLink','mUkuran'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('mJ').value='';
+  document.getElementById('mM').innerHTML='<option value="">-- Pilih Jenjang dulu --</option>';
+  document.getElementById('mTopik').value='-';
+  document.getElementById('mTipe').value='PDF';
+  document.getElementById('topikRow').style.display = jenis==='Modul Ajar'?'block':'none';
+  document.getElementById('mModal').style.display='flex';
+}
+async function editMateri(id, jenis) {
+  const res = await api('getMateri',{});
+  if(res.status!=='ok') return;
+  const m = res.data.find(x=>x.ID===id); if(!m) return;
+  const j = m.JenisDokumen||jenis;
+  document.getElementById('mMTitle').textContent=`Edit ${j}`;
+  document.getElementById('mId').value=m.ID;
+  document.getElementById('mJenis').value=j;
+  document.getElementById('mJenisDisplay').value=`${JENIS_ICON[j]||'📄'} ${j}`;
+  document.getElementById('mJ').value=m.Jenjang;
+  await loadMModalMapel();
+  document.getElementById('mM').value=m.MataPelajaran;
+  document.getElementById('mTopik').value=m.Topik||'-';
+  document.getElementById('mJudul').value=m.Judul;
+  document.getElementById('mDesc').value=m.Deskripsi;
+  document.getElementById('mLink').value=m.LinkDownload;
+  document.getElementById('mTipe').value=m.TipeFile||'PDF';
+  document.getElementById('mUkuran').value=m.Ukuran||'';
+  document.getElementById('topikRow').style.display = j==='Modul Ajar'?'block':'none';
+  document.getElementById('mModal').style.display='flex';
+}
+function closeMModal(){document.getElementById('mModal').style.display='none';}
+async function loadMModalMapel(){
+  const j=document.getElementById('mJ').value;
+  const sel=document.getElementById('mM');
+  sel.innerHTML='<option value="">-- Pilih Mapel --</option>';
+  if(!j) return;
+  const res=await api('getMapelByJenjang',{jenjang:j});
+  if(res.status==='ok') res.data.forEach(m=>sel.innerHTML+=`<option>${m}</option>`);
+}
+async function saveMateri(){
+  const id=document.getElementById('mId').value;
+  const jenis=document.getElementById('mJenis').value;
+  const d={id,jenis,jenjang:document.getElementById('mJ').value,mapel:document.getElementById('mM').value,
+    topik:jenis==='Modul Ajar'?document.getElementById('mTopik').value:'-',
+    judul:document.getElementById('mJudul').value.trim(),deskripsi:document.getElementById('mDesc').value.trim(),
+    link:document.getElementById('mLink').value.trim(),tipe:document.getElementById('mTipe').value,
+    ukuran:document.getElementById('mUkuran').value.trim(),uploadOleh:SESSION.nama,status:'Aktif'};
+  if(!d.jenis||!d.jenjang||!d.mapel||!d.judul||!d.link){toast('Lengkapi field wajib (Jenjang, Mapel, Judul, Link)','w');return;}
+  const res=await api(id?'editMateri':'addMateri',d);
+  if(res.status==='ok'){toast(res.message,'s');closeMModal();loadJenisMateri(jenis);loadDashboard();}
+  else toast(res.message,'e');
+}
+async function hapusMateri(id,judul,jenis){
+  if(!confirm(`Hapus "${judul}"?`)) return;
+  const res=await api('hapusMateri',{id});
+  if(res.status==='ok'){toast(res.message,'s');loadJenisMateri(jenis);}
+  else toast(res.message,'e');
+}
+
+// ============================================================
+// DOWNLOAD GURU
+// ============================================================
+function buildGuruTabs(){
+  const el=document.getElementById('guruGtabs');
+  el.innerHTML=`<div class="gtab active" onclick="setGuruJenis('Modul Ajar',this)">📖 Modul Ajar</div>`+
+    JENIS_LIST.slice(1).map(j=>`<div class="gtab ac-${JENIS_KEY[j]}" onclick="setGuruJenis('${j}',this)">${JENIS_ICON[j]} ${j}</div>`).join('');
+}
+function setGuruJenis(jenis,el){
+  GURU_JENIS=jenis;
+  document.querySelectorAll('#guruGtabs .gtab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  loadGMateri();
+}
+async function loadGMateri(){
+  document.getElementById('gMWrap').innerHTML='<div class="loading">Memuat...</div>';
+  const res=await api('getMateri',{jenis:GURU_JENIS,jenjang:document.getElementById('gfJ').value,mapel:document.getElementById('gfM').value,search:document.getElementById('gfS').value});
+  if(res.status!=='ok'){document.getElementById('gMWrap').innerHTML='<div class="empty"><div class="ei">⚠️</div><p>Gagal memuat</p></div>';return;}
+  const d=res.data||[]; const k=JENIS_KEY[GURU_JENIS];
+  if(!d.length){document.getElementById('gMWrap').innerHTML=`<div class="empty"><div class="ei">${JENIS_ICON[GURU_JENIS]}</div><p>Belum ada materi ${GURU_JENIS}</p></div>`;return;}
+  document.getElementById('gMWrap').innerHTML=`<div class="mg">${d.map(m=>`
+    <div class="mc">
+      <div class="mc-hd bg-${k}">
+        <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+          <div class="jbr">${m.JenisDokumen}</div><div class="jbr">${m.Jenjang}</div>
+        </div>
+        <h4>${m.Judul}</h4>
+      </div>
+      <div class="mc-bd">
+        <div class="mp">📚 ${m.MataPelajaran}</div>
+        ${m.Topik&&m.Topik!=='-'?`<div class="tk">🎯 ${m.Topik}</div>`:''}
+        <div class="ds">${m.Deskripsi||''}</div>
+      </div>
+      <div class="mc-ft">
+        <span class="dlc">📥 ${m.JumlahDownload||0} &nbsp;<span class="badge badge-${k}" style="font-size:10px">${m.TipeFile||'PDF'}</span>&nbsp;${m.Ukuran||''}</span>
+        <button class="btn btn-accent btn-sm" onclick="doDownload('${m.ID}','${esc(m.Judul)}','${m.Jenjang}','${esc(m.MataPelajaran)}','${esc(m.JenisDokumen)}')">⬇️ Download</button>
+      </div>
+    </div>`).join('')}</div>`;
+}
+async function doDownload(materiId,judul,jenjang,mapel,jenis){
+  const res=await api('downloadMateri',{guruId:SESSION.id,namaGuru:SESSION.nama,materiId,judulMateri:judul,jenjang,mapel,jenis});
+  if(res.status==='ok'){toast('⬇️ Membuka link download...','s');window.open(res.link,'_blank');}
+  else toast(res.message||'Gagal','e');
+}
+
+// ============================================================
+// LOG & RIWAYAT
+// ============================================================
+async function loadLog(){
+  document.getElementById('logWrap').innerHTML='<div class="loading">Memuat...</div>';
+  const res=await api('getLog',{});
+  if(res.status!=='ok')return;
+  const d=res.data||[];
+  document.getElementById('logWrap').innerHTML=d.length?`<table>
+    <tr><th>#</th><th>Guru</th><th>Materi</th><th>Jenis</th><th>Jenjang</th><th>Mata Pelajaran</th><th>Waktu</th></tr>
+    ${d.map((r,i)=>`<tr><td>${i+1}</td><td>${r.NamaGuru||'-'}</td><td>${r.JudulMateri||'-'}</td><td>${jenisBadge(r.JenisDokumen)}</td><td><span class="badge badge-info">${r.Jenjang||'-'}</span></td><td>${r.MataPelajaran||'-'}</td><td>${fmtDate(r.TanggalDownload)}</td></tr>`).join('')}
+    </table>`:'<div class="empty"><div class="ei">📭</div><p>Belum ada log</p></div>';
+}
+async function loadRiwayat(){
+  document.getElementById('rwWrap').innerHTML='<div class="loading">Memuat...</div>';
+  const res=await api('getLog',{guruId:SESSION.id});
+  if(res.status!=='ok')return;
+  const d=res.data||[];
+  document.getElementById('rwWrap').innerHTML=d.length?`<table>
+    <tr><th>#</th><th>Materi</th><th>Jenis</th><th>Jenjang</th><th>Mata Pelajaran</th><th>Waktu</th></tr>
+    ${d.map((r,i)=>`<tr><td>${i+1}</td><td>${r.JudulMateri||'-'}</td><td>${jenisBadge(r.JenisDokumen)}</td><td><span class="badge badge-info">${r.Jenjang||'-'}</span></td><td>${r.MataPelajaran||'-'}</td><td>${fmtDate(r.TanggalDownload)}</td></tr>`).join('')}
+    </table>`:'<div class="empty"><div class="ei">📭</div><p>Belum ada riwayat</p></div>';
+}
+
+// ============================================================
+// PROFIL
+// ============================================================
+function loadProfil(){
+  document.getElementById('pfContent').innerHTML=`
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
+      <div><label style="font-size:11px;color:var(--text-muted)">Nama</label><p style="font-weight:600">${SESSION.nama}</p></div>
+      <div><label style="font-size:11px;color:var(--text-muted)">NIP</label><p>${SESSION.nip||'-'}</p></div>
+      <div><label style="font-size:11px;color:var(--text-muted)">Jenjang</label><p>${SESSION.jenjang||'-'}</p></div>
+      <div><label style="font-size:11px;color:var(--text-muted)">Mata Pelajaran</label><p>${SESSION.mapel||'-'}</p></div>
+      <div style="grid-column:1/-1"><label style="font-size:11px;color:var(--text-muted)">Sekolah</label><p>${SESSION.sekolah||'-'}</p></div>
+    </div>`;
+}
+async function changePass(){
+  const o=document.getElementById('pOld').value,n=document.getElementById('pNew').value,c=document.getElementById('pCnf').value;
+  if(!o||!n||!c){toast('Lengkapi semua field','w');return;}
+  if(n!==c){toast('Konfirmasi tidak cocok','w');return;}
+  if(n.length<6){toast('Password min. 6 karakter','w');return;}
+  const res=await api('changePasswordGuru',{guruId:SESSION.id,oldPassword:o,newPassword:n});
+  if(res.status==='ok'){toast(res.message,'s');['pOld','pNew','pCnf'].forEach(id=>document.getElementById(id).value='');}
+  else toast(res.message,'e');
+}
+
+// ============================================================
+// UTILS
+// ============================================================
+function toast(msg,t='i'){
+  const c=document.getElementById('tc'),el=document.createElement('div');
+  const cls={s:'ts',e:'te',w:'tw2',i:'ti'};
+  const ico={s:'✅',e:'❌',w:'⚠️',i:'ℹ️'};
+  el.className=`toast ${cls[t]||'ti'}`;
+  el.innerHTML=`<span>${ico[t]||''}</span>${msg}`;
+  c.appendChild(el);
+  setTimeout(()=>{el.style.opacity='0';el.style.transition='opacity .3s';setTimeout(()=>el.remove(),300);},3500);
+}
+function stBadge(s){const m={Aktif:'badge-success',Menunggu:'badge-warn',Ditolak:'badge-danger'};return`<span class="badge ${m[s]||'badge-info'}">${s}</span>`;}
+function jenisBadge(j){const k=JENIS_KEY[j]||'MA';return`<span class="badge badge-${k}">${JENIS_ICON[j]||'📄'} ${j||'-'}</span>`;}
+function fmtDate(s){if(!s)return'-';try{return new Date(s).toLocaleDateString('id-ID',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});}catch(e){return s;}}
+function esc(s){return(s||'').replace(/'/g,"\\'").replace(/"/g,'&quot;');}
+
+// ============================================================
+// FLYING BALLS ANIMATION
+// ============================================================
+let ballAnimId = null;
+function initBalls() {
+  const canvas = document.getElementById('ballCanvas');
+  if (!canvas) return;
+  if (ballAnimId) { cancelAnimationFrame(ballAnimId); ballAnimId = null; }
+
+  const ctx = canvas.getContext('2d');
+  let W = canvas.width  = window.innerWidth;
+  let H = canvas.height = window.innerHeight;
+
+  window.addEventListener('resize', () => {
+    W = canvas.width  = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  });
+
+  // Ball emoji list — pakai emoji asli
+  const BALLS = ['⚽','🏀','🏸','🏐','🎾','🏉'];
+
+  class Ball {
+    constructor() { this.reset(true); }
+    reset(init) {
+      this.emoji = BALLS[Math.floor(Math.random() * BALLS.length)];
+      this.size  = 24 + Math.random() * 28;          // 24–52px
+      this.x     = Math.random() * W;
+      this.y     = init ? Math.random() * H : H + this.size + 20;
+      this.vx    = (Math.random() - .5) * 1.4;       // horizontal drift
+      this.vy    = -(1.2 + Math.random() * 2.2);     // upward speed
+      this.rot   = Math.random() * Math.PI * 2;
+      this.rotV  = (Math.random() - .5) * 0.06;
+      this.alpha = .15 + Math.random() * .55;
+      this.alphaV= 0;
+    }
+    update() {
+      this.x   += this.vx;
+      this.y   += this.vy;
+      this.rot += this.rotV;
+      // wrap horizontal
+      if (this.x < -this.size)  this.x = W + this.size;
+      if (this.x > W + this.size) this.x = -this.size;
+      // reset when off top
+      if (this.y < -this.size - 40) this.reset(false);
+    }
+    draw() {
+      ctx.save();
+      ctx.globalAlpha = this.alpha;
+      ctx.translate(this.x, this.y);
+      ctx.rotate(this.rot);
+      ctx.font = this.size + 'px serif';
+      ctx.textAlign    = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(this.emoji, 0, 0);
+      ctx.restore();
+    }
+  }
+
+  const balls = Array.from({length: 22}, () => new Ball());
+
+  function loop() {
+    // Only run while landing page is visible
+    const lp = document.getElementById('landingPage');
+    if (!lp || lp.style.display === 'none' || lp.style.display === '') {
+      ballAnimId = null; return;
+    }
+    ctx.clearRect(0, 0, W, H);
+    balls.forEach(b => { b.update(); b.draw(); });
+    ballAnimId = requestAnimationFrame(loop);
+  }
+  loop();
+}
+
+</script>
+</body>
+</html>
